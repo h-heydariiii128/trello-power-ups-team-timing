@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Team Timing Power ups</title>
+    <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
+    <script src="https://p.trellocdn.com/power-up.min.js"></script>
+    <link rel="icon" href="../../public/favicon.ico"/>
+    <link href="../index.css" rel="stylesheet">
+    <script>
+        window.getConfig = (key, defaultValue = null) => {
+            const configs = {}
+            return configs.hasOwnProperty(key) ? configs[key] : defaultValue
+        }
+    </script>
+</head>
+<body class="antialiased text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900">
+<div id="app"></div>
+<script type="module" src="../pages/startup/main.js"></script>
+</body>
+</html>

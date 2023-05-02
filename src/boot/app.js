@@ -1,6 +1,7 @@
 import {createApp} from "vue";
 import axios from "axios";
 import {createPinia} from "pinia";
+import powerupsInitialize from './powerups-registration.js'
 
 // components
 import MainFooter from "../components/MainFooter.vue";
@@ -42,7 +43,13 @@ export default function (App) {
         }
     })
 
+    window.appKey = '4b9922f16a7e5f8b8d7ce717c9180cc4'
+    window.appName = 'Team Timing'
+    app.config.globalProperties.appKey = window.appKey
+    app.config.globalProperties.appName = window.appName
     app.config.globalProperties.$api = api
 
     app.mount("#app");
+
+    powerupsInitialize({appKey: window.appKey, appName: window.appName})
 }

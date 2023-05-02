@@ -4,8 +4,9 @@
   "description": "",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
-    "start": "parcel src/views/*.html",
-    "build": "parcel build src/views/*.html"
+    "start": "parcel src/views/*.html --no-source-maps --no-content-hash",
+    "prebuild": "node clean-dist.js",
+    "build": "parcel build src/views/*.html --no-source-maps --no-content-hash"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +18,9 @@
     "buffer": "^5.5.0",
     "parcel": "^2.8.3",
     "parcel-plugin-pwa-manifest": "^3.1.1",
-    "postcss": "^8.1.0"
+    "postcss": "^8.1.0",
+    "rm": "^0.1.8",
+    "rmfr": "^2.0.0"
   },
   "dependencies": {
     "@tailwindcss/forms": "^0.5.3",

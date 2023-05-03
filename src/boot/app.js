@@ -1,7 +1,6 @@
 import {createApp} from "vue";
 import axios from "axios";
 import {createPinia} from "pinia";
-import powerupsInitialize from './powerups-registration.js'
 
 // components
 import MainFooter from "../components/MainFooter.vue";
@@ -51,5 +50,4 @@ export default function (App) {
 
     app.mount("#app");
 
-    powerupsInitialize({appKey: window.appKey, appName: window.appName})
 }

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "parcel src/views/*.html --no-source-maps --no-content-hash",
     "prebuild": "node clean-dist.js",
-    "build": "parcel build src/views/*.html --no-source-maps --no-content-hash"
+    "build": "parcel build src/views/*.html --no-source-maps --no-content-hash --public-url https://satisfying-mango-bagpipe.glitch.me/"
   },
   "keywords": [],
   "author": "",

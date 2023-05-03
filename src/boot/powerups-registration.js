@@ -3,6 +3,7 @@ import axios from 'axios'
 const LOGO_URL = 'https://cdn.glitch.global/624902af-fafc-4eae-b7a0-e772a855b1dd/logo.svg?v=1682948707829'
 const START_ICON = 'https://cdn.glitch.global/624902af-fafc-4eae-b7a0-e772a855b1dd/start.svg?v=1683012623916'
 const DONE_ICON = 'https://cdn.glitch.global/624902af-fafc-4eae-b7a0-e772a855b1dd/done.svg?v=1683012623169'
+const SET_ESTIMATE_ICON = 'https://cdn.glitch.global/624902af-fafc-4eae-b7a0-e772a855b1dd/set_time.svg?v=1683034167730'
 // token: ATTAb80a47a1993dc65a6c2fd5e60cf6594ef45e6a92ce26118c3e4154c764e57b0b019DE1C0
 
 const api = axios.create({
@@ -28,7 +29,7 @@ export default function initialize({appKey, appName}) {
     const oauthUrl =
         `https://trello.com/1/authorize?expiration=never&name=${encodeURIComponent(appName)}&scope=read,write,account&key=${appKey}&callback_method=fragment&return_url=${returnUrl}`;
 
-    console.log('TrelloPowerUp', TrelloPowerUp)
+    // console.log('TrelloPowerUp', TrelloPowerUp)
 
     function fillData(t) {
         const {member, board, organization, theme} = getContextInfo(t)
@@ -36,17 +37,43 @@ export default function initialize({appKey, appName}) {
         BOARD_ID = board
         ORGANIZATION_ID = organization
         THEME = theme
-        console.log('fillData', {member, board, organization, theme})
+        // console.log('fillData', {member, board, organization, theme})
     }
 
     async function startCart(t) {
         await setCardStatus(t, 'start')
     }
 
+    function setTeamEstimate(hour) {
+        return async function (t, options) {
+            const teamEstimateHistory = await getTeamEstimate(t)
+            // console.log('setTeamEstimate', hour, t, options)
+            // console.log('teamEstimateHistory', teamEstimateHistory)
+            if (!teamEstimateHistory[MEMBER_ID]) {
+                teamEstimateHistory[MEMBER_ID] = hour
+                await t.set('card', 'shared', 'team_estimate', teamEstimateHistory)
+            } else {
+                t.alert({
+                    message: 'your estimate for this backlog registered before!'
+                });
+            }
+            t.closePopup()
+        }
+    }
+
+    async function getMyEstimate(t) {
+        const teamEstimateHistory = await getTeamEstimate(t)
+        return teamEstimateHistory[MEMBER_ID]
+    }
+
+    async function getTeamEstimate(t) {
+        return await t.get('card', 'shared', 'team_estimate', {})
+    }
+
     async function doneCart(t) {
         await setCardStatus(t, 'end')
         /*.then(function (list) {
-        console.log(JSON.stringify(list, null, 2));
+        // console.log(JSON.stringify(list, null, 2));
     });*/
     }
 
@@ -60,13 +87,13 @@ export default function initialize({appKey, appName}) {
                     scope: {read: true, write: true}
                 })
 
-                console.log('success auth', token)
+                // console.log('success auth', token)
                 API_TOKEN = token
                 localStorage.api_token = token
                 location.reload()
                 /*const access_link = window.open(oauthUrl)
                 access_link.onclose = function () {
-                    console.log('closing...')
+                    // console.log('closing...')
                     window.location.reload()
                 }*/
                 // localStorage.api_token = res2
@@ -78,11 +105,13 @@ export default function initialize({appKey, appName}) {
     }
 
     async function notAuthorized(t) {
-        console.log('notAuthorized::token', API_TOKEN)
+        // console.log('notAuthorized::token', API_TOKEN)
         API_TOKEN = ''
         localStorage.api_token = ''
-        alert('دسترسی به امکانات نیازمند احراز هویت می باشد.')
-        return Promise.reject('دسترسی به امکانات نیازمند احراز هویت می باشد.')
+        t.alert({
+            message: 'Authorization failed, Please Click on Authorize button.'
+        });
+        return Promise.reject('Authorization failed, Please Click on Authorize button.')
     }
 
     function boardListUpdated() {
@@ -94,18 +123,24 @@ export default function initialize({appKey, appName}) {
         DONE_LIST_ID = done && done.id
     }
 
+    async function getMember(t, id) {
+        if (!API_TOKEN) return notAuthorized()
+        const {data} = await api.get(`members/${id}/lists?key=${appKey}&token=${API_TOKEN}`)
+        return data
+    }
+
     async function getBoardList(t) {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log('getBoardList::before', `boards/${BOARD_ID}/lists?key=${appKey}&token=${API_TOKEN}`)
+                // console.log('getBoardList::before', `boards/${BOARD_ID}/lists?key=${appKey}&token=${API_TOKEN}`)
                 if (!API_TOKEN) return notAuthorized()
                 const {data} = await api.get(`boards/${BOARD_ID}/lists?key=${appKey}&token=${API_TOKEN}`)
-                console.log('getBoardList', data)
+                // console.log('getBoardList', data)
                 BOARD_LIST = data
                 boardListUpdated()
                 return resolve(data)
             } catch (ex) {
-                console.log('getBoardList::error', ex)
+                // console.log('getBoardList::error', ex)
                 return reject(ex)
             }
         })
@@ -116,9 +151,9 @@ export default function initialize({appKey, appName}) {
             try {
                 if (!API_TOKEN) return notAuthorized()
                 const {card} = getContextInfo(t)
-                console.log('updateCard::token', API_TOKEN)
-                console.log('updateCard::cardId', card)
-                console.log('updateCard::payload', payload)
+                // console.log('updateCard::token', API_TOKEN)
+                // console.log('updateCard::cardId', card)
+                // console.log('updateCard::payload', payload)
                 if (!card) return reject(Error('Card Id is not provided.'))
                 if (!API_TOKEN) return reject(Error('token is not provided.'))
                 if (!appKey) return reject(Error('appKey is not provided.'))
@@ -126,7 +161,7 @@ export default function initialize({appKey, appName}) {
                 const {data} = api.put(`cards/${card}?key=${appKey}&token=${API_TOKEN}`, payload)
                 return resolve(data)
             } catch (ex) {
-                console.log('updateCard::error', ex)
+                // console.log('updateCard::error', ex)
                 return reject(ex)
             }
         })
@@ -137,11 +172,17 @@ export default function initialize({appKey, appName}) {
             try {
                 if (status === 'end') {
                     await updateCard(t, {
-                        idList: DONE_LIST_ID
+                        idList: DONE_LIST_ID,
+                        cover: {
+                            color: 'green'
+                        }
                     })
                 } else if (status === 'start') {
                     await updateCard(t, {
-                        idList: DOING_LIST_ID
+                        idList: DOING_LIST_ID,
+                        cover: {
+                            color: 'blue'
+                        }
                     })
                 }
                 t.set('card', 'shared', 'status', status)
@@ -196,7 +237,7 @@ export default function initialize({appKey, appName}) {
             if (!API_TOKEN) {
                 return [{
                     icon: LOGO_URL,
-                    text: 'احراز هویت',
+                    text: 'Authorize',
                     callback: authorize
                     /*url: oauthUrl,
                     target: '_blank' // optional target for above url*/
@@ -205,11 +246,10 @@ export default function initialize({appKey, appName}) {
             fillData(t)
             try {
                 const list = await getBoardList(t)
-                console.log('board::list', list)
+                // console.log('board::list', list)
             } catch {
             }
-            let buttons = []
-            return buttons
+            return []
         },
         // 'card-badges': function(t, options){
         //     return getBadges(t);
@@ -217,7 +257,35 @@ export default function initialize({appKey, appName}) {
         'card-buttons': async function (t, options) {
             context = t
             const status = await getCardStatus(t)
+            const memberEstimate = await getMyEstimate(t)
+
             const buttons = []
+            if (!memberEstimate) {
+                buttons.push({
+                    icon: SET_ESTIMATE_ICON,
+                    text: 'SET Team Estimate',
+                    condition: 'always',
+                    callback: (t, options) => t.popup({
+                        title: 'Choose Time',
+                        items: [{
+                            text: 'In 1 hour',
+                            callback: setTeamEstimate(1)
+                        }, {
+                            text: 'In 2 hours',
+                            callback: setTeamEstimate(2)
+                        }, {
+                            text: 'In 3 hours',
+                            callback: setTeamEstimate(3)
+                        }, {
+                            text: 'In 4 hours',
+                            callback: setTeamEstimate(4)
+                        }, {
+                            text: 'In 6 hours',
+                            callback: setTeamEstimate(6)
+                        }]
+                    })
+                })
+            }
             if (status === 'unset') {
                 buttons.push({
                     // we can either provide a button that has a callback function
@@ -248,6 +316,25 @@ export default function initialize({appKey, appName}) {
             }
 
             return buttons
+        },
+        'card-back-section': async function (t, options) {
+            const memberEstimate = await getMyEstimate(t)
+            if (memberEstimate) {
+                return {
+                    title: 'Team Estimate',
+                    icon: SET_ESTIMATE_ICON, // Must be a gray icon, colored icons not allowed.
+                    content: {
+                        type: 'iframe',
+                        url: t.signUrl(`https://satisfying-mango-bagpipe.glitch.me/team-estimate.html?token=${API_TOKEN}`),
+                        args: {token: API_TOKEN, appKey, appName},
+                        height: 100, // Max height is 1500.
+                    },
+                    /*  action: {
+                          text: 'My Action',
+                          callback: (t) => t.popup(...),
+                      }*/
+                }
+            } else return null
         },
         /*'card-detail-badges': function(t, options) {
             return getBadges(t);
@@ -340,7 +427,7 @@ export default function initialize({appKey, appName}) {
                     height: 140,
                 });
             } else {
-                console.log("🙈 Looks like you need to add your API key to the project!");
+                // console.log("🙈 Looks like you need to add your API key to the project!");
             }
         }*/
     }, {
@@ -348,6 +435,6 @@ export default function initialize({appKey, appName}) {
         appName
     });
 
-    console.log('Loaded by: ' + document.referrer);
+    // console.log('Loaded by: ' + document.referrer);
 
 }

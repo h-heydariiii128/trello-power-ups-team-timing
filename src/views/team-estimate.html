@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Team Timing Power ups</title>
+    <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css" crossorigin="anonymous">
+    <script src="https://p.trellocdn.com/power-up.min.js" crossorigin="anonymous"></script>
+    <link rel="icon" href="https://cdn.glitch.global/624902af-fafc-4eae-b7a0-e772a855b1dd/favicon.ico?v=1682948705413"/>
+    <link rel="icon" media="(prefers-color-scheme: dark)" type="image/png" sizes="128x128"
+          href="https://cdn.glitch.global/624902af-fafc-4eae-b7a0-e772a855b1dd/logo-white.svg?v=1682948709194">
+    <link rel="icon" media="(prefers-color-scheme: dark)" type="image/png" sizes="96x96"
+          href="https://cdn.glitch.global/624902af-fafc-4eae-b7a0-e772a855b1dd/logo-white.svg?v=1682948709194">
+    <link rel="icon" media="(prefers-color-scheme: light)" type="image/png" sizes="128x128"
+          href="https://cdn.glitch.global/624902af-fafc-4eae-b7a0-e772a855b1dd/logo.svg?v=1682948707829">
+    <link rel="icon" media="(prefers-color-scheme: light)" type="image/png" sizes="96x96"
+          href="https://cdn.glitch.global/624902af-fafc-4eae-b7a0-e772a855b1dd/logo.svg?v=1682948707829">
+    <script async src="https://cdn.tailwindcss.com"></script>
+    <!--    <link rel="icon" href="../../public/favicon.ico"/>
+        <link rel="icon" media="(prefers-color-scheme: dark)" type="image/png" sizes="128x128" href="../../public/logo-white.svg">
+        <link rel="icon" media="(prefers-color-scheme: dark)" type="image/png" sizes="96x96" href="../../public/logo-white.svg">
+        <link rel="icon" media="(prefers-color-scheme: light)" type="image/png" sizes="128x128" href="../../public/logo.svg">
+        <link rel="icon" media="(prefers-color-scheme: light)" type="image/png" sizes="96x96" href="../../public/logo.svg">-->
+    <script>
+        window.getConfig = (key, defaultValue = null) => {
+            const configs = {}
+            return configs.hasOwnProperty(key) ? configs[key] : defaultValue
+        }
+    </script>
+</head>
+<body class="antialiased text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900">
+<div id="app">
+<!--    <div id="estimate-team" style="min-height: 200px;">
+        <h4 v-if="cardData">{{ cardData.name }}</h4>
+        <ul v-if="teamEstimate">
+            <li v-for="(memberId, i) in Object.keys(teamEstimate)" :key="i">
+                {{ memberId }} <span v-if="isMe(memberId)">(me)</span>&nbsp;:&nbsp;{{ teamEstimate[memberId] }}h
+            </li>
+        </ul>
+    </div>-->
+</div>
+<script type="module" src="../pages/team-estimate/main.js" crossorigin="anonymous"></script>
+</body>
+</html>

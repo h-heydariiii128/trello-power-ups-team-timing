@@ -10,9 +10,13 @@
 <script>
 import {defineComponent} from 'vue'
 import DefaultLayout from "../../layout/DefaultLayout.vue";
+import powerUpsInitialize from '../../boot/powerups-registration.js'
 
 export default defineComponent({
     name: "Startup",
     components: {DefaultLayout},
+    mounted() {
+        powerUpsInitialize({appKey: window.appKey, appName: window.appName})
+    }
 })
 </script>
